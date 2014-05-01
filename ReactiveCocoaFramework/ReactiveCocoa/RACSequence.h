@@ -66,6 +66,21 @@ typedef RACSequence * (^RACSequenceBindBlock)(id value, BOOL *stop);
 /// Returns a new lazy sequence, or the receiver if the sequence is already lazy.
 @property (nonatomic, copy, readonly) RACSequence *lazySequence;
 
+/// Maps `block` across the values in the receiver and flattens the result.
+///
+/// Note that operators applied _after_ -flattenMap: behave differently from
+/// operators _within_ -flattenMap:. See the Examples section below.
+///
+/// This corresponds to the `SelectMany` method in Rx.
+///
+/// block - A block which accepts the values in the receiver and returns a new
+///         sequence. Returning `nil` from this block is equivalent to returning
+///         an empty sequence.
+///
+/// Returns a new sequence which represents the combined sequences resulting from
+/// mapping `block`.
+- (instancetype)flattenMap:(RACSequence * (^)(id value))block;
+
 /// Invokes -signalWithScheduler: with a new RACScheduler.
 - (RACSignal *)signal;
 

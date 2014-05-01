@@ -220,6 +220,35 @@ extern const NSInteger RACSignalErrorNoMatchingCase;
 ///                 signals.
 - (RACSignal *)flatten:(NSUInteger)maxConcurrent;
 
+/// Maps `block` across the values in the receiver and flattens the result.
+///
+/// Note that operators applied _after_ -flattenMap: behave differently from
+/// operators _within_ -flattenMap:. See the Examples section below.
+///
+/// This corresponds to the `SelectMany` method in Rx.
+///
+/// block - A block which accepts the values in the receiver and returns a new
+///         signal. Returning `nil` from this block is equivalent to returning
+///         an empty signal.
+///
+/// Examples
+///
+///   [signal flattenMap:^(id x) {
+///       // Logs each time a returned signal completes.
+///       return [[RACSignal return:x] logCompleted];
+///   }];
+///
+///   [[signal
+///       flattenMap:^(id x) {
+///           return [RACSignal return:x];
+///       }]
+///       // Logs only once, when all of the signals complete.
+///       logCompleted];
+///
+/// Returns a new signal which represents the combined signals resulting from
+/// mapping `block`.
+- (RACSignal *)flattenMap:(RACSignal * (^)(id value))block;
+
 /// Ignores all `next`s from the receiver, waits for the receiver to complete,
 /// then subscribes to a new signal.
 ///

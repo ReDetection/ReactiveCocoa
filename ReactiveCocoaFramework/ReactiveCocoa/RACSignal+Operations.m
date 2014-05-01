@@ -583,6 +583,10 @@ static RACDisposable *subscribeForever (RACSignal *signal, void (^next)(id), voi
 	}] setNameWithFormat:@"[%@] -flatten: %lu", self.name, (unsigned long)maxConcurrent];
 }
 
+- (RACSignal *)flattenMap:(RACSignal * (^)(id value))block {
+    return (RACSignal *) [super flattenMap:block];
+}
+
 - (RACSignal *)then:(RACSignal * (^)(void))block {
 	NSCParameterAssert(block != nil);
 

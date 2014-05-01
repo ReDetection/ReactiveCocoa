@@ -138,6 +138,10 @@
 	return sequence;
 }
 
+- (instancetype)flattenMap:(RACSequence * (^)(id value))block {
+    return (RACSequence *)[super flattenMap:block];
+}
+
 - (instancetype)concat:(RACStream *)stream {
 	NSCParameterAssert(stream != nil);
 
