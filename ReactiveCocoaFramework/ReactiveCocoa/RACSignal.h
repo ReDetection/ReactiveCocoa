@@ -12,7 +12,14 @@
 @class RACDisposable;
 @class RACScheduler;
 @class RACSubject;
+@class RACSignal;
 @protocol RACSubscriber;
+
+/// A block which accepts a value from a RACSignal and returns a new RACSignal.
+///
+/// Setting `stop` to `YES` will cause the bind to terminate after the returned
+/// value. Returning `nil` will result in immediate termination.
+typedef RACSignal * (^RACSignalBindBlock)(id value, BOOL *stop);
 
 @interface RACSignal : RACStream
 
@@ -107,6 +114,19 @@
 /// two signals. Any error from one of the original signals will be forwarded on
 /// the returned signal.
 - (RACSignal *)zipWith:(RACSignal *)signal;
+
+/// Lazily binds a block to the values in the receiver.
+///
+/// This should only be used if you need to terminate the bind early, or close
+/// over some state. -flattenMap: is more appropriate for all other cases.
+///
+/// block - A block returning a RACSignalBindBlock. This block will be invoked
+///         each time the bound signal is re-evaluated. This block must not be
+///         nil or return nil.
+///
+/// Returns a new signal which represents the combined result of all lazy
+/// applications of `block`.
+- (RACSignal *)bind:(RACSignalBindBlock (^)(void))block;
 
 @end
 

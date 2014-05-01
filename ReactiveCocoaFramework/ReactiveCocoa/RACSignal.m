@@ -89,7 +89,7 @@
 	return [RACReturnSignal return:value];
 }
 
-- (RACSignal *)bind:(RACStreamBindBlock (^)(void))block {
+- (RACSignal *)bind:(RACSignalBindBlock (^)(void))block {
 	NSCParameterAssert(block != NULL);
 
 	/*
@@ -105,7 +105,7 @@
 	 */
 
 	return [[RACSignal createSignal:^(id<RACSubscriber> subscriber) {
-		RACStreamBindBlock bindingBlock = block();
+        RACSignalBindBlock bindingBlock = block();
 
 		NSMutableArray *signals = [NSMutableArray arrayWithObject:self];
 
@@ -159,7 +159,7 @@
 				if (compoundDisposable.disposed) return;
 
 				BOOL stop = NO;
-				id signal = bindingBlock(x, &stop);
+				RACSignal *signal = bindingBlock(x, &stop);
 
 				@autoreleasepool {
 					if (signal != nil) addSignal(signal);
