@@ -10,7 +10,15 @@
 #import "RACStream.h"
 
 @class RACScheduler;
+@class RACSequence;
 @class RACSignal;
+
+/// A block which accepts a value from a RACStream and returns a new instance
+/// of the same stream class.
+///
+/// Setting `stop` to `YES` will cause the bind to terminate after the returned
+/// value. Returning `nil` will result in immediate termination.
+typedef RACSequence * (^RACSequenceBindBlock)(id value, BOOL *stop);
 
 /// Represents an immutable sequence of values. Unless otherwise specified, the
 /// sequences' values are evaluated lazily on demand. Like Cocoa collections,
@@ -124,6 +132,19 @@
 ///
 /// Returns an object that passes the block or nil if no objects passed.
 - (id)objectPassingTest:(BOOL (^)(id value))block;
+
+/// Lazily binds a block to the values in the receiver.
+///
+/// This should only be used if you need to terminate the bind early, or close
+/// over some state. -flattenMap: is more appropriate for all other cases.
+///
+/// block - A block returning a RACSequenceBindBlock. This block will be invoked
+///         each time the bound sequence is re-evaluated. This block must not be
+///         nil or return nil.
+///
+/// Returns a new sequence which represents the combined result of all lazy
+/// applications of `block`.
+- (instancetype)bind:(RACSequenceBindBlock (^)(void))block;
 
 /// Creates a sequence that dynamically generates its values.
 ///

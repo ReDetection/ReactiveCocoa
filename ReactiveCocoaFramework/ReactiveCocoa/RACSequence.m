@@ -36,7 +36,7 @@
 //
 // Returns a new sequence which contains `current`, followed by the combined
 // result of all applications of `block` to the remaining values in the receiver.
-- (instancetype)bind:(RACStreamBindBlock)block passingThroughValuesFromSequence:(RACSequence *)current;
+- (instancetype)bind:(RACSequenceBindBlock)block passingThroughValuesFromSequence:(RACSequence *)current;
 
 @end
 
@@ -85,12 +85,12 @@
 	return [RACUnarySequence return:value];
 }
 
-- (instancetype)bind:(RACStreamBindBlock (^)(void))block {
-	RACStreamBindBlock bindBlock = block();
+- (instancetype)bind:(RACSequenceBindBlock (^)(void))block {
+    RACSequenceBindBlock bindBlock = block();
 	return [[self bind:bindBlock passingThroughValuesFromSequence:nil] setNameWithFormat:@"[%@] -bind:", self.name];
 }
 
-- (instancetype)bind:(RACStreamBindBlock)bindBlock passingThroughValuesFromSequence:(RACSequence *)passthroughSequence {
+- (instancetype)bind:(RACSequenceBindBlock)bindBlock passingThroughValuesFromSequence:(RACSequence *)passthroughSequence {
 	// Store values calculated in the dependency here instead, avoiding any kind
 	// of temporary collection and boxing.
 	//

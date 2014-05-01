@@ -37,11 +37,11 @@
 	return nil;
 }
 
-- (instancetype)bind:(RACStreamBindBlock (^)(void))block {
-	RACStreamBindBlock bindBlock = block();
+- (instancetype)bind:(RACSequenceBindBlock (^)(void))block {
+	RACSequenceBindBlock bindBlock = block();
 	BOOL stop = NO;
 
-	RACSequence *result = (id)[bindBlock(self.head, &stop) setNameWithFormat:@"[%@] -bind:", self.name];
+	RACSequence *result = [bindBlock(self.head, &stop) setNameWithFormat:@"[%@] -bind:", self.name];
 	return result ?: self.class.empty;
 }
 

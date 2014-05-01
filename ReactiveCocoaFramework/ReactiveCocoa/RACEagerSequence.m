@@ -18,15 +18,15 @@
 	return [[self sequenceWithArray:@[ value ] offset:0] setNameWithFormat:@"+return: %@", [value rac_description]];
 }
 
-- (instancetype)bind:(RACStreamBindBlock (^)(void))block {
+- (instancetype)bind:(RACSequenceBindBlock (^)(void))block {
 	NSCParameterAssert(block != nil);
-	RACStreamBindBlock bindBlock = block();
+    RACSequenceBindBlock bindBlock = block();
 	NSArray *currentArray = self.array;
 	NSMutableArray *resultArray = [NSMutableArray arrayWithCapacity:currentArray.count];
 	
 	for (id value in currentArray) {
 		BOOL stop = NO;
-		RACSequence *boundValue = (id)bindBlock(value, &stop);
+		RACSequence *boundValue = bindBlock(value, &stop);
 		if (boundValue == nil) break;
 
 		for (id x in boundValue) {
