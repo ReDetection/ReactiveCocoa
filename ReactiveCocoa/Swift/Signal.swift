@@ -230,23 +230,30 @@ public func take<T, E>(count: Int) -> Signal<T, E> -> Signal<T, E> {
 			}
 
 			var taken = 0
+			let disposable = CompositeDisposable()
 
-			return signal.observe(Signal.Observer { event in
+			disposable.addDisposable(signal.observe(Signal.Observer { event in
 				switch event {
 				case let .Next(value):
 					if taken < count {
 						taken++
-						sendNext(observer, value.value)
-					}
-
-					if taken == count {
-						sendCompleted(observer)
+						
+						if taken == count {
+							disposable.dispose()
+							sendNext(observer, value.value)
+							sendCompleted(observer)
+							
+						} else {
+							sendNext(observer, value.value)
+						}
 					}
 
 				default:
 					observer.put(event)
 				}
-			})
+			}))
+			
+			return disposable
 		}
 	}
 }
